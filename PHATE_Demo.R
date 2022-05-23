@@ -26,11 +26,15 @@ load("D:/Dropbox/##_GitHub/##_PHH_Lab/CellChat_Demo/2022-05-16_Secret_PADC_CellC
 
 
 
-#Method1#
-seuratObject_Duc2 <-  seuratObject[,seuratObject@meta.data[["Cell_type"]]=="Ductal cell type 2"]
-rm(list=setdiff(ls(), c("seuratObject_Duc2","seuratObject")))
+# #Method1#
+# seuratObject_Duc2 <-  seuratObject[,seuratObject@meta.data[["Cell_type"]]=="Ductal cell type 2"]
+# rm(list=setdiff(ls(), c("seuratObject_Duc2","seuratObject")))
 # #Method2#
 # seuratObject_Duc2 <-  seuratObject[,seuratObject@meta.data[["Cell_type"]] %in% "Ductal cell type 2"]
+seuratObject_Duc2 <-  seuratObject[,seuratObject@meta.data[["Cell_type"]] %in% c("Acinar cell",
+                                                                                 "Ductal cell type 1",
+                                                                                 "Ductal cell type 2")]
+rm(list=setdiff(ls(), c("seuratObject_Duc2","seuratObject")))
 # 
 # #Method3#
 # # neurons_cds <- cds[,grepl("neurons", colData(cds)$assigned_cell_type, ignore.case=TRUE)]
@@ -40,7 +44,7 @@ rm(list=setdiff(ls(), c("seuratObject_Duc2","seuratObject")))
 library(Seurat)
 #Method1#
 data <- seuratObject_Duc2@assays[["RNA"]]@counts %>% as.data.frame()
-data <- seuratObject@assays[["RNA"]]@counts %>% as.data.frame()
+#data <- seuratObject@assays[["RNA"]]@counts %>% as.data.frame()
 
 # #Method2#
 # data <- GetAssayData(seuratObject_Duc2, assay = "RNA", slot = "data") %>% as.data.frame()
@@ -51,6 +55,7 @@ data <- data %>% t() %>% as.data.frame()
 #work!# #In terminal# pip3 install phate
 #install.packages("phateR")
 #library(phateR)
+library(phateR)
 data_phate <- phate(data,npca = 30)
 
 library(viridis)
@@ -58,3 +63,4 @@ ggplot(data_phate) +
   geom_point(aes(PHATE1, PHATE2, color=data$TOP2A)) +
   labs(color="Mpo") +
   scale_color_viridis(option="B")
+
