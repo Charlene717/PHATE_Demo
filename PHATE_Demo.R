@@ -10,8 +10,9 @@ memory.limit(300000)
 # pip install --user phate
 # python -m pip install phate
 
+#### Basic installation ####
 ## Check whether the installation of those packages is required from basic
-Package.set <- c("tidyverse","Seurat","viridis","phateR")
+Package.set <- c("tidyverse","Seurat","viridis")
 for (i in 1:length(Package.set)) {
   if (!requireNamespace(Package.set[i], quietly = TRUE)){
     install.packages(Package.set[i])
@@ -20,6 +21,29 @@ for (i in 1:length(Package.set)) {
 ## Load Packages
 lapply(Package.set, library, character.only = TRUE)
 rm(Package.set,i)
+
+#### BiocManager installation ####
+## Check whether the installation of those packages is required from BiocManager
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+Package.set <- c("SeuratDisk","SeuratObject")
+for (i in 1:length(Package.set)) {
+  if (!requireNamespace(Package.set[i], quietly = TRUE)){
+    BiocManager::install(Package.set[i])
+  }
+}
+## Load Packages
+lapply(Package.set, library, character.only = TRUE)
+rm(Package.set,i)
+
+options(stringsAsFactors = FALSE)
+
+
+## Installation phateR with devtools and reticulate
+if (!suppressWarnings(require(devtools))) install.packages("devtools")
+reticulate::py_install("phate", pip=TRUE)
+devtools::install_github("KrishnaswamyLab/phateR")
 
 ####------ Load data ------####
 load("D:/Dropbox/##_GitHub/##_PHH_Lab/CellChat_Demo/2022-05-16_Secret_PADC_CellChat_Example_PRJCA001063.RData")
@@ -56,11 +80,12 @@ data <- data %>% t() %>% as.data.frame()
 #install.packages("phateR")
 #library(phateR)
 library(phateR)
-data_phate <- phate(data,npca = 30)
+data_phate <- phate(data,npca = 100)
 
 library(viridis)
 ggplot(data_phate) +
   geom_point(aes(PHATE1, PHATE2, color=data$TOP2A)) +
-  labs(color="Mpo") +
+  labs(color="TOP2A") +
   scale_color_viridis(option="B")
 
+graphics.off()
